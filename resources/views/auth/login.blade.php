@@ -1,14 +1,13 @@
-
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
+    <div class="container-fluid d-flex justify-content-center align-items-center" style="height: 74vh;">
+        <div class="row w-100">
+            <div class="col-md-4 mx-auto">
                 <div class="card">
-                    <div class="card-header">{{ __('Login') }}</div>
-
                     <div class="card-body">
+                        <h2 class="pb-3">{{ __('Login') }}</h2>
+
                         <form action="{{ route('login') }}" method="POST">
                             @csrf
 
@@ -44,4 +43,3 @@
         </div>
     </div>
 @endsection
-
