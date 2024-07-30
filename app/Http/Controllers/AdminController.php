@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoRequest;
 use App\Models\Access;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -21,12 +22,10 @@ class AdminController extends Controller
 
         $customerCount = User::where('role', 'customer')->count();
         $videoCount = Video::count();
-        $requestCount = VideoRequest::count();
+        $requestCount = VideoRequest::where('status', 'pending')->count();
 
         return view('admin.dashboard', compact('customerCount', 'videoCount', 'requestCount'));
     }
-
-    
 
     public function createCustomer(Request $request)
     {
@@ -43,9 +42,8 @@ class AdminController extends Controller
             'role' => 'customer',
         ]);
 
-        return redirect()->route('admin.dashboard');
+        return redirect()->route('admin.customers')->with('success', 'Customer added successfully.');
     }
-
 
     public function listCustomers()
     {
@@ -63,20 +61,20 @@ class AdminController extends Controller
     {
         $customer = User::findOrFail($id);
 
-        $validated = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $customer->id,
-            'password' => 'nullable|min:8',
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $customer->id,
+            'password' => 'nullable|string|min:8',
         ]);
 
-        $customer->name = $validated['name'];
-        $customer->email = $validated['email'];
+        $customer->name = $request->name;
+        $customer->email = $request->email;
         if ($request->filled('password')) {
-            $customer->password = bcrypt($validated['password']);
+            $customer->password = Hash::make($request->password);
         }
         $customer->save();
 
-        return redirect()->route('admin.dashboard')->with('success', 'Customer updated successfully');
+        return redirect()->route('admin.customers')->with('success', 'Customer updated successfully.');
     }
 
     public function deleteCustomer($id)
@@ -84,7 +82,7 @@ class AdminController extends Controller
         $customer = User::findOrFail($id);
         $customer->delete();
 
-        return redirect()->route('admin.dashboard')->with('success', 'Customer deleted successfully');
+        return redirect()->route('admin.customers')->with('success', 'Customer deleted successfully.');
     }
 
     // Fungsi untuk mengubah URL YouTube menjadi format embed
@@ -141,7 +139,7 @@ class AdminController extends Controller
 
         Video::create($validated);
 
-        return redirect()->route('admin.dashboard');
+        return redirect()->route('admin.videos');
     }
 
     public function updateVideo(Request $request, $id)
@@ -162,7 +160,7 @@ class AdminController extends Controller
 
         $video->update($validated);
 
-        return redirect()->route('admin.dashboard');
+        return redirect()->route('admin.videos');
     }
 
     public function deleteVideo($id)
@@ -170,7 +168,7 @@ class AdminController extends Controller
         $video = Video::findOrFail($id);
         $video->delete();
 
-        return redirect()->route('admin.dashboard');
+        return redirect()->route('admin.videos');
     }
 
     public function listRequests()
@@ -196,6 +194,6 @@ class AdminController extends Controller
             ]);
         }
 
-        return redirect()->route('admin.dashboard');
+        return redirect()->route('admin.requests');
     }
 }

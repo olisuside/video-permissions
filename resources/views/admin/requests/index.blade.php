@@ -1,28 +1,38 @@
 @extends('layouts.admin')
 
 @section('content')
-<h2>Requests</h2>
-<ul>
-    @foreach ($requests as $request)
-        @if ($request->status != 'expired')
-            <li>{{ $request->customer->name }} requested {{ $request->video->title }} - {{ $request->status }}
-                <form action="{{ route('admin.manageRequest', $request->id) }}" method="POST">
-                    @csrf
-                    @method('PATCH')
-                    <select name="status" required>
-                        <option value="pending" {{ $request->status == 'pending' ? 'selected' : '' }}>Pending
-                        </option>
-                        <option value="approved" {{ $request->status == 'approved' ? 'selected' : '' }}>Approved
-                        </option>
-                        <option value="rejected" {{ $request->status == 'rejected' ? 'selected' : '' }}>Rejected
-                        </option>
-                    </select>
-                    <input type="number" name="duration" placeholder="Duration in hours" min="1">
-                    <button type="submit">Update</button>
-                </form>
-            </li>
-        @endif
-    @endforeach
-</ul>
+<div class="container pt-3">
+    <div class="d-flex justify-content-between mb-3">
+        <h1>Requests</h1>
+        
+    </div>
 
+    <ul class="list-group">
+        @foreach ($requests as $request)
+            @if ($request->status != 'expired')
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        {{ $request->customer->name }} requested {{ $request->video->title }} - {{ $request->status }}
+                    </div>
+                    
+                    <form action="{{ route('admin.manageRequest', $request->id) }}" method="POST" class="d-flex align-items-center">
+                        @csrf
+                        @method('PATCH')
+                        <div class="me-2">
+                            <select name="status" class="form-select form-select-sm" required>
+                                <option value="pending" {{ $request->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                <option value="approved" {{ $request->status == 'approved' ? 'selected' : '' }}>Approved</option>
+                                <option value="rejected" {{ $request->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                            </select>
+                        </div>
+                        <div class="me-2">
+                            <input type="number" name="duration" class="form-control form-control-sm" placeholder="Duration in hours" min="1">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">Update</button>
+                    </form>
+                </li>
+            @endif
+        @endforeach
+    </ul>
+</div>
 @endsection
