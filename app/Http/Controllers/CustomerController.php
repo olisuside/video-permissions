@@ -13,10 +13,18 @@ class CustomerController extends Controller
     public function index()
     {
         // Hapus akses yang expired
-        Access::where('access_end_time', '<', now())->delete();
+        $expiredAccesses = Access::where('access_end_time', '<', now())->get();
+        foreach ($expiredAccesses as $expiredAccess) {
+            $expiredAccess->videoRequest->update(['status' => 'expired']);
+            $expiredAccess->delete();
+        }
 
         // Ambil semua video
         $videos = Video::all();
+
+
+        // Ambil maksimal 3 video terbaru
+        $latestVideos = Video::latest()->take(3)->get();
 
         // Ambil permintaan akses yang dibuat oleh customer saat ini
         $requests = VideoRequest::where('customer_id', Auth::id())->with('video')->get();
@@ -26,18 +34,18 @@ class CustomerController extends Controller
             $query->where('customer_id', Auth::id());
         })->with('videoRequest.video')->get();
 
-        return view('customer.dashboard', compact('videos', 'requests', 'accesses'));
+        return view('customer.dashboard', compact('videos','latestVideos', 'requests', 'accesses'));
     }
 
     public function requestAccess(Request $request, $videoId)
     {
         $customerId = Auth::id();
-    
+
         // Cari permintaan akses yang sudah ada untuk video dan customer ini
         $existingRequest = VideoRequest::where('customer_id', $customerId)
-                                       ->where('video_id', $videoId)
-                                       ->first();
-    
+            ->where('video_id', $videoId)
+            ->first();
+
         if ($existingRequest) {
             // Jika permintaan sudah ada, perbarui statusnya jika statusnya tidak 'pending'
             if ($existingRequest->status !== 'pending') {
@@ -51,10 +59,10 @@ class CustomerController extends Controller
                 'status' => 'pending',
             ]);
         }
-    
+
         return redirect()->route('customer.dashboard');
     }
-    
+
     public function watchVideo($accessId)
     {
         $access = Access::findOrFail($accessId);
