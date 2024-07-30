@@ -19,11 +19,14 @@ class AdminController extends Controller
             $expiredAccess->delete();
         }
 
-        $customers = User::where('role', 'customer')->get();
-        $videos = Video::all();
-        $requests = VideoRequest::with('customer', 'video')->get();
-        return view('admin.dashboard', compact('customers', 'videos', 'requests'));
+        $customerCount = User::where('role', 'customer')->count();
+        $videoCount = Video::count();
+        $requestCount = VideoRequest::count();
+
+        return view('admin.dashboard', compact('customerCount', 'videoCount', 'requestCount'));
     }
+
+    
 
     public function createCustomer(Request $request)
     {
@@ -47,7 +50,7 @@ class AdminController extends Controller
     public function listCustomers()
     {
         $customers = User::where('role', 'customer')->get();
-        return view('admin.dashboard', compact('customers'));
+        return view('admin.customers.index', compact('customers'));
     }
 
     public function editCustomer($id)
@@ -116,6 +119,12 @@ class AdminController extends Controller
         return 'https://img.youtube.com/vi/' . $videoId . '/maxresdefault.jpg';
     }
 
+    public function listVideos()
+    {
+        $videos = Video::all();
+        return view('admin.videos.index', compact('videos'));
+    }
+
     public function createVideo(Request $request)
     {
         $validated = $request->validate([
@@ -162,6 +171,12 @@ class AdminController extends Controller
         $video->delete();
 
         return redirect()->route('admin.dashboard');
+    }
+
+    public function listRequests()
+    {
+        $requests = VideoRequest::with('customer', 'video')->get();
+        return view('admin.requests.index', compact('requests'));
     }
 
     public function manageRequest(Request $request, $id)

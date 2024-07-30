@@ -1,9 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
         <!-- Carousel Section -->
-        <h2 class="my-4 text-center">Latest Videos</h2>
         <div id="carouselExampleCaptions" class="carousel slide">
             <div class="carousel-indicators">
                 @foreach($latestVideos as $index => $video)
@@ -13,7 +11,7 @@
             <div class="carousel-inner">
                 @foreach($latestVideos as $index => $video)
                     <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                        <img src="{{ $video->thumbnail }}" class="d-block w-100" alt="{{ $video->title }}" style="height: 500px; object-fit: cover;">
+                        <img src="{{ $video->thumbnail }}" class="d-block w-100" alt="{{ $video->title }}" style="height: 70vh; object-fit: cover;">
                         <div class="carousel-caption d-none d-md-block">
                             <h5>{{ $video->title }}</h5>
                             <p>{{ $video->description }}</p>
@@ -30,6 +28,7 @@
                 <span class="visually-hidden">Next</span>
             </button>
         </div>
+        <div class="container">
 
         <!-- Videos Section -->
         <h2 class="my-4 text-center">All Videos</h2>
@@ -40,7 +39,7 @@
                     $hasAccess = $accesses->firstWhere('videoRequest.video_id', $video->id);
                 @endphp
                 <div class="col-md-4 mb-4 d-flex justify-content-center">
-                    <div class="card text-bg-dark border-0 shadow-lg" style="width: 28rem;">
+                    <div class="card border-0 shadow-lg rounded-lg" style="width: 28rem;">
                         <img src="{{ $video->thumbnail }}" class="card-img-top" alt="{{ $video->title }}" style="object-fit: cover; width: 100%; height: 400px;">
                         <div class="card-body">
                             <div class="d-flex justify-content-between">

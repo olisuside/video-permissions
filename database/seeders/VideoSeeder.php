@@ -30,15 +30,31 @@ class VideoSeeder extends Seeder
 
         $videos = [
             [
-                'title' => 'Sample Video 1',
+                'title' => 'Deadpool & Wolverine',
                 'description' => 'This is a description for sample video 1.',
-                'url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', // Ganti dengan URL video YouTube nyata
+                'url' => 'https://www.youtube.com/watch?v=Idh8n5XuYIA&ab_channel=MarvelEntertainment', // Ganti dengan URL video YouTube nyata
             ],
             [
-                'title' => 'Sample Video 2',
+                'title' => 'Venom: The Last Dance',
                 'description' => 'This is a description for sample video 2.',
-                'url' => 'https://www.youtube.com/watch?v=9bZkp7q19f0', // Ganti dengan URL video YouTube nyata
+                'url' => 'https://www.youtube.com/watch?v=STScKOUpXR8&ab_channel=MarvelEntertainment', // Ganti dengan URL video YouTube nyata
             ],
+            [
+                'title' => 'Joker: Folie À Deux',
+                'description' => 'This is a description for sample video 3.',
+                'url' => 'https://www.youtube.com/watch?v=_OKAwz2MsJs&ab_channel=WarnerBros.Pictures', // Ganti dengan URL video YouTube nyata
+            ],
+            [
+                'title' => 'TRANSFORMERS ONE',
+                'description' => 'This is a description for sample video 4.',
+                'url' => 'https://www.youtube.com/watch?v=u2NuUWuwPCM&ab_channel=ParamountPictures', // Ganti dengan URL video YouTube nyata
+            ],
+            [
+                'title' => 'Despicable Me 4',
+                'description' => 'This is a description for sample video 5.',
+                'url' => 'https://www.youtube.com/watch?v=LtNYaH61dXY&ab_channel=Illumination', // Ganti dengan URL video YouTube nyata
+            ],
+
             // Tambahkan lebih banyak video jika diperlukan
         ];
 
