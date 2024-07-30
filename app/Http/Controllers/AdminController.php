@@ -18,7 +18,7 @@ class AdminController extends Controller
             $expiredAccess->videoRequest->update(['status' => 'expired']);
             $expiredAccess->delete();
         }
-        
+
         $customers = User::where('role', 'customer')->get();
         $videos = Video::all();
         $requests = VideoRequest::with('customer', 'video')->get();
@@ -84,6 +84,37 @@ class AdminController extends Controller
         return redirect()->route('admin.dashboard')->with('success', 'Customer deleted successfully');
     }
 
+    // Fungsi untuk mengubah URL YouTube menjadi format embed
+    private function convertToEmbedUrl($url)
+    {
+        // Ekstrak video ID dari URL
+        preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $url, $matches);
+        $videoId = $matches[1] ?? null;
+
+        // Jika tidak ditemukan video ID, kembalikan URL asli
+        if (!$videoId) {
+            return $url;
+        }
+
+        // Kembalikan URL embed
+        return 'https://www.youtube.com/embed/' . $videoId;
+    }
+
+    // Fungsi untuk mendapatkan URL thumbnail YouTube
+    private function getThumbnailUrl($url)
+    {
+        // Ekstrak video ID dari URL
+        preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $url, $matches);
+        $videoId = $matches[1] ?? null;
+
+        // Jika tidak ditemukan video ID, kembalikan null
+        if (!$videoId) {
+            return null;
+        }
+
+        // Kembalikan URL thumbnail
+        return 'https://img.youtube.com/vi/' . $videoId . '/maxresdefault.jpg';
+    }
 
     public function createVideo(Request $request)
     {
@@ -92,6 +123,12 @@ class AdminController extends Controller
             'description' => 'required',
             'url' => 'required|url',
         ]);
+
+        // Ubah URL menjadi format embed
+        $validated['url'] = $this->convertToEmbedUrl($validated['url']);
+
+        // Dapatkan URL thumbnail
+        $validated['thumbnail'] = $this->getThumbnailUrl($request->url);
 
         Video::create($validated);
 
@@ -107,6 +144,13 @@ class AdminController extends Controller
         ]);
 
         $video = Video::findOrFail($id);
+
+        // Ubah URL menjadi format embed
+        $validated['url'] = $this->convertToEmbedUrl($validated['url']);
+
+        // Dapatkan URL thumbnail
+        $validated['thumbnail'] = $this->getThumbnailUrl($request->url);
+
         $video->update($validated);
 
         return redirect()->route('admin.dashboard');
