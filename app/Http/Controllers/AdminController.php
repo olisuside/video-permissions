@@ -12,6 +12,13 @@ class AdminController extends Controller
 {
     public function index()
     {
+        // Update status video requests yang memiliki akses habis
+        $expiredAccesses = Access::where('access_end_time', '<', now())->get();
+        foreach ($expiredAccesses as $expiredAccess) {
+            $expiredAccess->videoRequest->update(['status' => 'expired']);
+            $expiredAccess->delete();
+        }
+        
         $customers = User::where('role', 'customer')->get();
         $videos = Video::all();
         $requests = VideoRequest::with('customer', 'video')->get();
@@ -120,10 +127,13 @@ class AdminController extends Controller
         $videoRequest->update(['status' => $request->status]);
 
         if ($request->status == 'approved') {
+            // Mengubah durasi akses berdasarkan input dari form
+            $duration = $request->input('duration', 2); // Default 2 jam jika tidak ada input
+
             Access::create([
                 'request_id' => $videoRequest->id,
                 'access_start_time' => now(),
-                'access_end_time' => now()->addHours(2), // Contoh: 2 jam
+                'access_end_time' => now()->addHours($duration), // Durasi akses berdasarkan input
             ]);
         }
 

@@ -7,7 +7,7 @@
         <h2>Customers</h2>
 
         <!-- Success Message -->
-        @if(session('success'))
+        @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
@@ -19,13 +19,15 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="name">Name</label>
-                        <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" required>
+                        <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}"
+                            required>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" required>
+                        <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}"
+                            required>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -48,16 +50,18 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($customers as $customer)
+                @foreach ($customers as $customer)
                     <tr>
                         <td>{{ $customer->name }}</td>
                         <td>{{ $customer->email }}</td>
                         <td>
                             <!-- Edit Button -->
-                            <a href="{{ route('admin.editCustomer', $customer->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                            <a href="{{ route('admin.editCustomer', $customer->id) }}"
+                                class="btn btn-primary btn-sm">Edit</a>
 
                             <!-- Delete Form -->
-                            <form action="{{ route('admin.deleteCustomer', $customer->id) }}" method="POST" style="display:inline;">
+                            <form action="{{ route('admin.deleteCustomer', $customer->id) }}" method="POST"
+                                style="display:inline;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
@@ -71,7 +75,7 @@
 
         <h2>Videos</h2>
         <ul>
-            @foreach($videos as $video)
+            @foreach ($videos as $video)
                 <li>{{ $video->title }}
                     <form action="{{ route('admin.updateVideo', $video->id) }}" method="POST">
                         @csrf
@@ -89,23 +93,29 @@
                 </li>
             @endforeach
         </ul>
-
         <h2>Requests</h2>
         <ul>
-            @foreach($requests as $request)
-                <li>{{ $request->customer->name }} requested {{ $request->video->title }} - {{ $request->status }}
-                    <form action="{{ route('admin.manageRequest', $request->id) }}" method="POST">
-                        @csrf
-                        @method('PATCH')
-                        <select name="status" required>
-                            <option value="pending" {{ $request->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="approved" {{ $request->status == 'approved' ? 'selected' : '' }}>Approved</option>
-                            <option value="rejected" {{ $request->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                        </select>
-                        <button type="submit">Update</button>
-                    </form>
-                </li>
+            @foreach ($requests as $request)
+                @if ($request->status != 'expired')
+                    <li>{{ $request->customer->name }} requested {{ $request->video->title }} - {{ $request->status }}
+                        <form action="{{ route('admin.manageRequest', $request->id) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <select name="status" required>
+                                <option value="pending" {{ $request->status == 'pending' ? 'selected' : '' }}>Pending
+                                </option>
+                                <option value="approved" {{ $request->status == 'approved' ? 'selected' : '' }}>Approved
+                                </option>
+                                <option value="rejected" {{ $request->status == 'rejected' ? 'selected' : '' }}>Rejected
+                                </option>
+                            </select>
+                            <input type="number" name="duration" placeholder="Duration in hours" min="1">
+                            <button type="submit">Update</button>
+                        </form>
+                    </li>
+                @endif
             @endforeach
         </ul>
+
     </div>
 @endsection
