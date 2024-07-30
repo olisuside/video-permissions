@@ -173,7 +173,9 @@ class AdminController extends Controller
 
     public function listRequests()
     {
-        $requests = VideoRequest::with('customer', 'video')->get();
+        $requests = VideoRequest::with('customer', 'video')
+            ->where('status', 'pending')
+            ->get();
         return view('admin.requests.index', compact('requests'));
     }
 
