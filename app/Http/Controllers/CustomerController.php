@@ -12,9 +12,17 @@ class CustomerController extends Controller
 {
     public function index()
     {
+        // Hapus akses yang expired
+        Access::where('access_end_time', '<', now())->delete();
+
+        // Ambil semua video
         $videos = Video::all();
+
+        // Ambil permintaan akses yang dibuat oleh customer saat ini
         $requests = VideoRequest::where('customer_id', Auth::id())->with('video')->get();
-        $accesses = Access::whereHas('videoRequest', function($query) {
+
+        // Ambil akses yang valid untuk customer saat ini
+        $accesses = Access::whereHas('videoRequest', function ($query) {
             $query->where('customer_id', Auth::id());
         })->with('videoRequest.video')->get();
 
@@ -23,15 +31,30 @@ class CustomerController extends Controller
 
     public function requestAccess(Request $request, $videoId)
     {
-        VideoRequest::create([
-            'customer_id' => Auth::id(),
-            'video_id' => $videoId,
-            'status' => 'pending',
-        ]);
-
+        $customerId = Auth::id();
+    
+        // Cari permintaan akses yang sudah ada untuk video dan customer ini
+        $existingRequest = VideoRequest::where('customer_id', $customerId)
+                                       ->where('video_id', $videoId)
+                                       ->first();
+    
+        if ($existingRequest) {
+            // Jika permintaan sudah ada, perbarui statusnya jika statusnya tidak 'pending'
+            if ($existingRequest->status !== 'pending') {
+                $existingRequest->update(['status' => 'pending']);
+            }
+        } else {
+            // Jika permintaan tidak ada, buat yang baru
+            VideoRequest::create([
+                'customer_id' => $customerId,
+                'video_id' => $videoId,
+                'status' => 'pending',
+            ]);
+        }
+    
         return redirect()->route('customer.dashboard');
     }
-
+    
     public function watchVideo($accessId)
     {
         $access = Access::findOrFail($accessId);
@@ -43,4 +66,3 @@ class CustomerController extends Controller
         return redirect()->route('customer.dashboard')->with('error', 'Access expired');
     }
 }
-
