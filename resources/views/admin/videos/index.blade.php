@@ -6,7 +6,7 @@
             <h1>Videos</h1>
 
             <!-- Button to Open the Add Video Modal -->
-            <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addVideoModal">
+            <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addVideoModal">
                 Add Video
             </button>
         </div>
@@ -16,7 +16,7 @@
                 <tr>
                     <th>Title</th>
                     <th>Description</th>
-                    <th>URL</th>
+                    <th>URL (YOUTUBE ONLY)</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -67,7 +67,7 @@
                                             <textarea name="description" id="description{{ $video->id }}" class="form-control" required>{{ old('description', $video->description) }}</textarea>
                                         </div>
                                         <div class="form-group mt-3">
-                                            <label for="url{{ $video->id }}">URL</label>
+                                            <label for="url{{ $video->id }}">URL (YOUTUBE ONLY)</label>
                                             <input type="url" name="url" id="url{{ $video->id }}"
                                                 class="form-control" value="{{ old('url', $video->url) }}" required>
                                         </div>
@@ -101,7 +101,7 @@
                                 <textarea name="description" id="description" class="form-control" required></textarea>
                             </div>
                             <div class="form-group mt-3">
-                                <label for="url">URL</label>
+                                <label for="url">URL (YOUTUBE ONLY)</label>
                                 <input type="url" name="url" id="url" class="form-control" required>
                             </div>
                             <button type="submit" class="btn btn-success mt-3">Add</button>

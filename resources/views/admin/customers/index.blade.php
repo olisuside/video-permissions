@@ -7,7 +7,7 @@
         <h1>Customers</h1>
 
         <!-- Button to Open the Add Customer Modal -->
-        <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
             Add Customer
         </button>
     </div>
